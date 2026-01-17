@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="cldcapi11">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../WTK2.5.2_01/lib/cldcapi11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../WTK2.5.2_01/lib/midpapi20.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../../../../WTK2.5.2_01/lib/wma20.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

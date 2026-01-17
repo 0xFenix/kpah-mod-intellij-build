@@ -1,0 +1,118 @@
+<project name="J2ME_Build" default="run">
+    <!--    replace with your env variables-->
+    <property name="jdk.home" value="C:\Users\Noverify\.jdks\corretto-1.8.0_472\jre"/>
+    <property name="wtk.home" value="C:/WTK2.5.2_01"/>
+    <property name="microemu.jar" value="C:\Users\Noverify\Desktop\Microemulator.jar"/>
+    <property name="libs.dir" value="libs"/>
+    <property name="app.name" value="KPAH_MOD"/>
+
+    <property environment="env"/>
+    <!--    classpath-->
+    <path id="external.libs">
+        <!--        <fileset dir="${libs.dir}">-->
+        <!--            <include name="*.jar"/>-->
+        <!--        </fileset>-->
+        <fileset dir="${jdk.home}/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${wtk.home}/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    <property name="cp.string" refid="external.libs"/>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="compile" depends="clean">
+        <mkdir dir="build/classes"/>
+        <copy todir="build/classes">
+            <fileset dir="out/production/KPAH_AntBuilder/"/>
+        </copy>
+    </target>
+
+    <target name="dist" depends="compile">
+        <mkdir dir="build/bin"/>
+
+        <jar destfile="build/bin/preverifed.jar" manifest="app/res/META-INF/MANIFEST.MF" duplicate="preserve">
+            <zipgroupfileset dir="${libs.dir}" includes="*.jar" erroronmissingdir="false"/>
+            <fileset dir="build/classes"/>
+            <fileset dir="res" excludes="META-INF/MANIFEST.MF" erroronmissingdir="false"/>
+        </jar>
+
+        <!--        we use proguard instead WTK to preverify,
+Therefore, it can be built on Linux and macOS. -->
+        <java jar="tools/proguard.jar" fork="true">
+            <arg line="-injars"/>
+            <arg line="build/bin/preverifed.jar"/>
+            <arg line="-outjars"/>
+            <arg line="build/dist/${app.name}.jar"/>
+            <arg line="-libraryjars"/>
+            <arg line="${cp.string}"/>
+            <arg line="-ignorewarnings"/>
+            <arg line="-dontusemixedcaseclassnames"/>
+            <arg line="-dontshrink"/>
+            <arg line="-dontoptimize"/>
+            <arg line="-dontobfuscate"/>
+            <arg line="-microedition"/>
+        </java>
+
+        <delete dir="build/bin"/>
+        <delete dir="out"/>
+
+    </target>
+
+    <!--    obfuscate jar with proguard-->
+    <target name="obfuscate">
+        <taskdef resource="proguard/ant/task.properties"
+                 classpath="tools/proguard-ant.jar"/>
+
+        <proguard>
+
+            -verbose
+
+            <!-- Specify the input jars, output jars, and library jars. -->
+
+            -injars build/dist/${app.name}.jar
+            -outjars build/dist/${app.name}_obf.jar
+
+            -libraryjars ${cp.string}
+
+            -allowaccessmodification
+            -overloadaggressively
+            -repackageclasses ''
+            -verbose
+            -dontnote
+            -dontwarn
+            -ignorewarnings
+
+            -keep public class * extends javax.microedition.midlet.MIDlet {
+            public &lt;init&gt;();
+            public void startApp();
+            public void pauseApp();
+            public void destroyApp(boolean);
+            }
+
+            -keepclasseswithmembers,includedescriptorclasses,allowshrinking class * {
+            native &lt;methods&gt;;
+            }
+
+            -keep class javak.** {
+            &lt;fields&gt;;
+            &lt;methods&gt;;
+            }
+        </proguard>
+
+        <echo message="Obfuscation process started..."/>
+
+    </target>
+
+    <!--    Run midlet with microemulator-->
+    <target name="run" depends="dist">
+        <java jar="${microemu.jar}" fork="true">
+            <arg value="build/dist/${app.name}.jar"/>
+        </java>
+    </target>
+    <!--    Cre Tran Duc Huy-->
+</project>
