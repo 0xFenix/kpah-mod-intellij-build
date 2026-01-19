@@ -1,17 +1,31 @@
 <project name="J2ME_Build" default="run">
-    <!--    replace with your env variables-->
-    <property name="jdk.home" value="C:\Users\Noverify\.jdks\corretto-1.8.0_472\jre"/>
-    <property name="wtk.home" value="C:/WTK2.5.2_01"/>
-    <property name="microemu.jar" value="C:\Users\Noverify\Desktop\Microemulator.jar"/>
+    <!--    replace with your jre path-->
+    <condition property="jdk.home"
+               value="/Users/${user.name}/Library/Java/JavaVirtualMachines/corretto-1.8.0_472/Contents/Home/jre">
+        <os family="mac"/>
+    </condition>
+    <!--    replace with your jre path-->
+    <condition property="jdk.home" value="${user.home}/.jdks/corretto-1.8.0_472">
+        <or>
+            <os family="windows"/>
+            <and>
+                <os family="unix"/>
+                <not>
+                    <os family="mac"/>
+                </not>
+            </and>
+        </or>
+    </condition>
+
+    <property name="wtk.home" value="wtk"/>
+    <property name="microemu.jar" value="tools/emulator.jar"/>
     <property name="libs.dir" value="libs"/>
+    <!--    app name, you can rename it-->
     <property name="app.name" value="KPAH_MOD"/>
 
     <property environment="env"/>
-    <!--    classpath-->
+    <!--    lib classpath-->
     <path id="external.libs">
-        <!--        <fileset dir="${libs.dir}">-->
-        <!--            <include name="*.jar"/>-->
-        <!--        </fileset>-->
         <fileset dir="${jdk.home}/lib">
             <include name="*.jar"/>
         </fileset>
@@ -19,6 +33,7 @@
             <include name="*.jar"/>
         </fileset>
     </path>
+
     <property name="cp.string" refid="external.libs"/>
 
     <target name="clean">
@@ -28,21 +43,20 @@
     <target name="compile" depends="clean">
         <mkdir dir="build/classes"/>
         <copy todir="build/classes">
+            <!--            Replace with your out/*/* path-->
             <fileset dir="out/production/KPAH_AntBuilder/"/>
         </copy>
     </target>
 
     <target name="dist" depends="compile">
         <mkdir dir="build/bin"/>
-
         <jar destfile="build/bin/preverifed.jar" manifest="app/res/META-INF/MANIFEST.MF" duplicate="preserve">
             <zipgroupfileset dir="${libs.dir}" includes="*.jar" erroronmissingdir="false"/>
             <fileset dir="build/classes"/>
             <fileset dir="res" excludes="META-INF/MANIFEST.MF" erroronmissingdir="false"/>
         </jar>
 
-        <!--        we use proguard instead WTK to preverify,
-Therefore, it can be built on Linux and macOS. -->
+        <!--preverify with -->
         <java jar="tools/proguard.jar" fork="true">
             <arg line="-injars"/>
             <arg line="build/bin/preverifed.jar"/>

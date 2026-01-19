@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Build &amp; Obfuscate" type="AntRunConfiguration">
+    <antsettings antfile="file://$PROJECT_DIR$/build.xml" target="obfuscate" />
+    <method v="2">
+      <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/build.xml" target="clean" />
+      <option name="Make" enabled="true" />
+      <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/build.xml" target="dist" />
+    </method>
+  </configuration>
+</component>
