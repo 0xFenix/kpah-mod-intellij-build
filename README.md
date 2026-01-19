@@ -13,8 +13,6 @@ Cập nhật các đường dẫn sau trong `build.xml` theo máy của bạn:
 
 ```xml
 <property name="jdk.home" value="C:\đường\đến\jdk\jre (Java 8)"/>
-<property name="wtk.home" value="C:/đường/đến/WTK2.5.2_01"/>
-<property name="microemu.jar" value="C:\đường\đến\Microemulator.jar"/>
 ```
 
 ## Build
