@@ -43,8 +43,7 @@
     <target name="compile" depends="clean">
         <mkdir dir="build/classes"/>
         <copy todir="build/classes">
-            <!--            Replace with your out/*/* path-->
-            <fileset dir="out/production/KPAH_AntBuilder/"/>
+            <fileset dir="${output.dir}"/>
         </copy>
     </target>
 
